@@ -84,9 +84,9 @@ if 'history' not in st.session_state: st.session_state.history = []
 # ==================== UI RENDERING ====================
 
 def render_dashboard():
+    """Home Dashboard replicated from provided design"""
     u = st.session_state.user
     
-    # Header
     st.markdown(f"""
     <div class="profile-header">
         <div style="display:flex; gap:12px; align-items:center;">
@@ -97,7 +97,6 @@ def render_dashboard():
     </div>
     """, unsafe_allow_html=True)
     
-    # Balance Card
     total = sum(g['current'] for g in st.session_state.goals)
     st.markdown(f"""
     <div class="balance-card">
@@ -113,7 +112,6 @@ def render_dashboard():
     
     st.markdown("<div style='display:flex; justify-content:space-between; margin-bottom:15px;'><b>My goals</b><span style='color:#CCFF00; font-size:12px;'>View All ></span></div>", unsafe_allow_html=True)
     
-    # Goals List (Horizontal Bar Style)
     for i, goal in enumerate(st.session_state.goals):
         prog = min(int((goal['current'] / goal['target']) * 100), 100)
         st.markdown(f"""
@@ -138,13 +136,13 @@ def render_dashboard():
     if st.button("+ New goal"): st.session_state.view = 'CREATE'; st.rerun()
 
 def render_detail():
+    """Goal Details with circular ring from provided design"""
     goal = st.session_state.goals[st.session_state.selected_goal]
-    prog = goal['current'] / goal['target']
+    prog = goal['current'] / goal['target'] if goal['target'] > 0 else 0
     offset = 565 - (prog * 565)
 
     if st.button("← Back"): st.session_state.view = 'DASHBOARD'; st.rerun()
 
-    # Circular Progress Detail
     st.markdown(f"""
     <div style='text-align:center;'><span style='color:#555; font-size:11px; font-weight:700;'>{goal['category'].upper()}</span><br><h3>{goal['name']}</h3></div>
     <div class="ring-container">
@@ -156,4 +154,47 @@ def render_detail():
     </div>
     <div style="text-align:center;">
         <h1 style='margin:0;'>₹{goal['current']:,} <span style='color:#555; font-size:18px;'>/ ₹{goal['target']:,}</span></h1>
-        <div style='background:#CCFF00; color:black; padding:3px 12px; border-radius:20px; display:inline-block; font-weight:900; margin-top:10px;'>{int(prog*1
+        <div style='background:#CCFF00; color:black; padding:3px 12px; border-radius:20px; display:inline-block; font-weight:900; margin-top:10px;'>{int(prog*100)}%</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    amt = st.number_input("Amount to Seed", min_value=1)
+    
+    encoded_name = urllib.parse.quote(MY_NAME)
+    upi_url = f"upi://pay?pa={MY_VPA}&pn={encoded_name}&am={amt}&cu=INR&mode=02&tr=SEED{int(time.time())}"
+    
+    st.markdown(f"""<a href="{upi_url}" target="_self" style="text-decoration:none;"><div style="background:#CCFF00; color:black; padding:18px; border-radius:100px; text-align:center; font-weight:900; margin-bottom:10px;">Top up goal balance</div></a>""", unsafe_allow_html=True)
+    
+    if st.button("I HAVE PAID ✅"):
+        goal['current'] += amt
+        st.session_state.history.append({"msg": f"Top-up: {goal['name']}", "amt": f"+₹{amt}"})
+        st.rerun()
+
+# ==================== MAIN ROUTER ====================
+def main():
+    inject_custom_css()
+    if st.session_state.view == 'SIGNUP':
+        st.markdown("<div style='text-align:center; padding:60px 20px;'><div style='font-size:120px;'>🌱💰</div><h1 style='font-weight:800; font-size:36px;'>Set Your Goals.<br>Start Saving.</h1></div>", unsafe_allow_html=True)
+        with st.form("signup"):
+            name = st.text_input("Full Name", placeholder="Lefin Mohammed")
+            mobile = st.text_input("Mobile Number", max_chars=10)
+            if st.form_submit_button("Create Account"):
+                if name and mobile:
+                    st.session_state.user = {'name': name, 'mobile': mobile}
+                    st.session_state.view = 'DASHBOARD'; st.rerun()
+    elif st.session_state.view == 'DASHBOARD': render_dashboard()
+    elif st.session_state.view == 'DETAIL': render_detail()
+    elif st.session_state.view == 'CREATE':
+        st.markdown("### 🎯 New Goal")
+        with st.container():
+            n = st.text_input("Goal Name")
+            t = st.number_input("Target Amount", min_value=1)
+            if st.button("Initialize Locker"):
+                if n and t > 0:
+                    cat, emoji = get_goal_meta(n)
+                    st.session_state.goals.append({'name': n, 'target': float(t), 'current': 0.0, 'category': cat, 'emoji': emoji})
+                    st.session_state.view = 'DASHBOARD'; st.rerun()
+
+if __name__ == "__main__":
+    main()
