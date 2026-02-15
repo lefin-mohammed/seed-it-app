@@ -35,7 +35,6 @@ st.markdown("""
     
     .stProgress > div > div > div > div { background-color: #00FF94; }
     
-    /* Hide Streamlit Header/Footer for App Feel */
     header {visibility: hidden;}
     footer {visibility: hidden;}
     </style>
@@ -125,7 +124,7 @@ def show_home():
                     st.rerun()
             else:
                 reason = "Target Not Met" if not target_met else f"Locked until {goal['date']}"
-                st.button(f"🔒 {reason.upper()}", disabled=True, key=f"locked_{i}")
+                st.button(f"🔒 {reason.upper()}", disabled=True, key=f_locked_{i}")
             st.markdown("</div>", unsafe_allow_html=True)
 
 def show_create():
@@ -144,4 +143,54 @@ def show_create():
         is_squad = st.toggle("SQUAD GOAL (POOL WITH FRIENDS)", key="is_squad")
         
         if st.button("INITIALIZE VAULT ➝"):
-            if name and target >= 1.0
+            if name and target >= 1.0: # FIXED: Added the colon here
+                st.session_state.goals.append({
+                    "name": name, "target": target, "balance": 0, "date": lock_date,
+                    "type": "SQUAD" if is_squad else "SOLO",
+                    "ledger": {"YOU": 0, "FEZIN": 500, "RAHUL": 200} if is_squad else {"YOU": 0}
+                })
+                st.session_state.view = "HOME"
+                st.rerun()
+            else:
+                st.error("Enter goal name and target")
+        st.markdown("</div>", unsafe_allow_html=True)
+
+def show_history():
+    st.markdown("### Activity Feed")
+    if not st.session_state.history:
+        st.info("No recent activity.")
+    else:
+        for tx in reversed(st.session_state.history):
+            st.markdown(f"""<div class='tx-row'><div><div style='font-size:14px;'>{tx['msg']}</div><div style='font-size:10px; color:#555;'>{tx['status']}</div></div><div class='mint'>{tx['amt']}</div></div>""", unsafe_allow_html=True)
+
+def show_settings():
+    st.markdown("### Account Settings")
+    st.markdown(f"<div class='app-card'><b>{st.session_state.user['name']}</b><br>Age: {st.session_state.user['age']}<br><span class='sub-text'>{st.session_state.user['bank']} USER</span></div>", unsafe_allow_html=True)
+    if st.button("LOGOUT"):
+        st.session_state.view = "AUTH"
+        st.session_state.goals = []
+        st.session_state.user = None
+        st.rerun()
+
+# ==========================================
+# 4. MAIN ROUTER & NAVIGATION
+# ==========================================
+
+if st.session_state.view == "AUTH":
+    show_auth()
+else:
+    if st.session_state.view == "HOME": show_home()
+    elif st.session_state.view == "CREATE": show_create()
+    elif st.session_state.view == "HISTORY": show_history()
+    elif st.session_state.view == "SETTINGS": show_settings()
+
+    st.markdown("<br><br><br>", unsafe_allow_html=True)
+    c1, c2, c3, c4 = st.columns(4)
+    with c1:
+        if st.button("🏠", key="nav_home"): st.session_state.view = "HOME"; st.rerun()
+    with c2:
+        if st.button("➕", key="nav_add"): st.session_state.view = "CREATE"; st.rerun()
+    with c3:
+        if st.button("📜", key="nav_hist"): st.session_state.view = "HISTORY"; st.rerun()
+    with c4:
+        if st.button("⚙️", key="nav_sett"): st.session_state.view = "SETTINGS"; st.rerun()
