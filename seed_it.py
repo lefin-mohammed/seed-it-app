@@ -557,44 +557,56 @@ def render_dashboard():
     """, unsafe_allow_html=True)
     
     # Goals List
-    for goal in st.session_state.goals:
+    for idx, goal in enumerate(st.session_state.goals):
         progress = calculate_progress(goal['current'], goal['target'])
         
-        # Create container for goal card
-        col1, col2 = st.columns([20, 1])
+        # Wrapper container
+        goal_container = st.container()
         
-        with col1:
-            # Goal card content (clickable to view details)
-            if st.button(f"view_{goal['id']}", key=f"view_{goal['id']}", label_visibility="collapsed", use_container_width=True):
-                st.session_state.selected_goal = goal['id']
-                st.session_state.view = 'DETAIL'
-                st.rerun()
-        
-        # Render the goal card with + button
-        st.markdown(f"""
-        <div class="goal-card">
-            <div class="goal-image">
-                <div class="goal-image-emoji">{goal['emoji']}</div>
-            </div>
-            <div class="goal-details">
-                <div class="goal-header">
-                    <div class="goal-info">
-                        <div class="goal-category">{goal['category']}</div>
-                        <div class="goal-name">{goal['name']}</div>
-                        <div class="goal-progress-text">{progress}%</div>
+        with goal_container:
+            # Two invisible buttons for interactivity
+            cols = st.columns([9, 1])
+            
+            with cols[0]:
+                # Main card button (invisible, for clicking card)
+                if st.button(f"view_card_{idx}", key=f"vcard_{idx}", label_visibility="collapsed", use_container_width=True):
+                    st.session_state.selected_goal = goal['id']
+                    st.session_state.view = 'DETAIL'
+                    st.rerun()
+            
+            with cols[1]:
+                # Add button
+                if st.button("➕", key=f"add_btn_{idx}"):
+                    st.session_state.selected_goal = goal['id']
+                    st.session_state.view = 'DETAIL'
+                    st.rerun()
+            
+            # Visual card overlay
+            st.markdown(f"""
+            <div style="margin-top: -60px; margin-bottom: 12px; pointer-events: none;">
+                <div class="goal-card">
+                    <div class="goal-image">
+                        <div class="goal-image-emoji">{goal['emoji']}</div>
+                    </div>
+                    <div class="goal-details">
+                        <div class="goal-header">
+                            <div class="goal-info">
+                                <div class="goal-category">{goal['category']}</div>
+                                <div class="goal-name">{goal['name']}</div>
+                                <div class="goal-progress-text">{progress}%</div>
+                            </div>
+                        </div>
+                        <div class="goal-progress-bar">
+                            <div class="goal-progress-fill" style="width: {progress}%"></div>
+                        </div>
+                        <div class="goal-amounts">
+                            <span class="goal-current">${goal['current']:,.2f}</span>
+                            <span class="goal-target">/${goal['target']:,.2f}</span>
+                        </div>
                     </div>
                 </div>
-                <div class="goal-progress-bar">
-                    <div class="goal-progress-fill" style="width: {progress}%"></div>
-                </div>
-                <div class="goal-amounts">
-                    <span class="goal-current">${goal['current']:,.2f}</span>
-                    <span class="goal-target">/${goal['target']:,.2f}</span>
-                </div>
             </div>
-            <button class="goal-add-btn" onclick="alert('Add money to {goal['name']}')">+</button>
-        </div>
-        """, unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
     
     # New Goal Button
     if st.button("+ New goal", key="new_goal"):
@@ -650,3 +662,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
