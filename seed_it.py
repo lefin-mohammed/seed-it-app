@@ -4,212 +4,185 @@ import urllib.parse
 from datetime import datetime, date
 
 # ==========================================
-# 1. ARCHITECTURAL UI (THE "APPLE WALLET" STYLE)
+# 1. FAMPAY DESIGN ENGINE (ELITE DARK)
 # ==========================================
-st.set_page_config(page_title="Seed It Pro", page_icon="🏦", layout="centered")
+st.set_page_config(page_title="Seed It Elite", page_icon="💳", layout="centered")
 
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&display=swap');
     
     .stApp { background: #000000; color: #FFFFFF; font-family: 'Outfit', sans-serif; }
 
-    /* UNIFIED CONTAINER ALIGNMENT */
-    .main-container { max-width: 400px; margin: auto; padding: 10px; }
-
-    /* NEON GLASS CARDS */
-    .glass-card {
-        background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
-        border: 1px solid rgba(255,255,255,0.1);
-        border-radius: 28px; padding: 24px; margin-bottom: 20px;
-        backdrop-filter: blur(10px);
+    /* FAMPAY CARD STYLE */
+    .elite-card {
+        background: #111111;
+        border: 1px solid #1A1A1A;
+        border-radius: 32px;
+        padding: 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.6);
     }
 
-    /* SQUAD AVATARS ALIGNMENT */
-    .squad-strip {
-        display: flex; align-items: center; gap: -10px; margin-top: 15px;
+    /* QUICK ACTIONS (STORY STYLE) */
+    .story-container {
+        display: flex; gap: 15px; overflow-x: auto; padding: 10px 0;
+        scrollbar-width: none;
     }
-    .avatar {
-        width: 32px; height: 32px; border-radius: 50%; 
-        border: 2px solid #000; background: #222;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 10px; font-weight: 800; margin-left: -8px;
+    .story-circle {
+        min-width: 65px; height: 65px; border-radius: 50%;
+        border: 2px solid #DFFF00; display: flex; align-items: center;
+        justify-content: center; font-weight: 800; font-size: 14px;
     }
 
     /* TYPOGRAPHY */
-    .label { color: #555; font-size: 10px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; }
-    .value { font-size: 24px; font-weight: 800; color: #00FF94; }
-
-    /* ALIVE PROGRESS RING */
-    .ring-container {
-        position: relative; width: 200px; height: 200px; margin: 20px auto;
-        display: flex; align-items: center; justify-content: center;
-    }
-    .svg-ring { transform: rotate(-90deg); }
-    .ring-bg { fill: none; stroke: #111; stroke-width: 8; }
-    .ring-fill { 
-        fill: none; stroke: #00FF94; stroke-width: 8; 
-        stroke-linecap: round; transition: stroke-dasharray 1s ease;
-    }
-
-    /* NAVIGATION */
-    .nav-bar {
-        position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-        width: 90%; background: rgba(15,15,15,0.8); border: 1px solid #222;
-        border-radius: 24px; display: flex; justify-content: space-around; padding: 10px;
-        backdrop-filter: blur(20px); z-index: 1000;
-    }
-
-    /* BUTTON ALIGNMENT */
-    div.stButton > button {
-        background: #FFFFFF; color: black; border-radius: 18px;
-        padding: 14px; font-weight: 800; border: none; width: 100%;
-        transition: 0.2s;
-    }
-    div.stButton > button:hover { background: #00FF94; color: black; }
+    .f-label { color: #666; font-size: 11px; font-weight: 700; letter-spacing: 1px; }
+    .f-value { font-size: 32px; font-weight: 900; color: #DFFF00; }
     
+    /* PROGRESS BAR (THICK & NEON) */
+    .stProgress > div > div > div > div { background-color: #DFFF00; height: 12px; border-radius: 10px; }
+
+    /* BUTTONS */
+    div.stButton > button {
+        background: #DFFF00; color: black; border-radius: 24px;
+        padding: 18px; font-weight: 900; border: none; width: 100%;
+        font-size: 16px; margin-top: 10px;
+    }
+    
+    /* SETTINGS LOGOUT BUTTON */
+    .logout-btn button { background: #FF4B4B !important; color: white !important; }
+
     header, footer, .stDeployButton { visibility: hidden; }
     </style>
 """, unsafe_allow_html=True)
 
 # ==========================================
-# 2. LOGIC & DATA MAPPING
+# 2. CORE DATA
 # ==========================================
-MY_UPI_ID = "phathim630@oksbi" 
+MY_VPA = "phathim630@oksbi" 
 MY_NAME = "Hathim p"
 
-def get_icon(name):
-    name = name.lower()
-    if "car" in name: return "🚗"
-    if "phone" in name: return "📱"
-    if "home" in name: return "🏠"
-    if "travel" in name: return "✈️"
-    if "bike" in name: return "🏍️"
-    return "🎯"
-
-if 'view' not in st.session_state: st.session_state.view = "LOGIN"
-if 'goals' not in st.session_state: st.session_state.goals = []
-if 'privacy' not in st.session_state: st.session_state.privacy = False
+if 'v' not in st.session_state: st.session_state.v = "AUTH"
+if 'g' not in st.session_state: st.session_state.g = []
 
 # ==========================================
-# 3. SCREEN: LOGIN (CLEAN ALIGNMENT)
+# 3. SCREEN: LOGIN
 # ==========================================
-def show_login():
-    st.markdown("<br><br><br><h1 style='text-align:center; font-weight:800;'>SEED IT</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center; color:#444;'>Secure Asset Locker</p>", unsafe_allow_html=True)
-    
+def show_auth():
+    st.markdown("<br><br><h1 style='text-align:center; font-weight:900; letter-spacing:-2px; font-size:50px;'>SEED<span style='color:#DFFF00;'>IT</span></h1>", unsafe_allow_html=True)
     with st.container():
-        st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
-        name = st.text_input("Name")
-        age = st.text_input("Age")
-        phone = st.text_input("Mobile Number")
-        if st.button("LOGIN ➝"):
-            if name and age and phone:
-                st.session_state.user = {"name": name, "age": age, "phone": phone}
-                st.session_state.view = "DASHBOARD"
+        st.markdown("<div class='elite-card'>", unsafe_allow_html=True)
+        st.markdown("<p class='f-label'>MOBILE NUMBER</p>", unsafe_allow_html=True)
+        phone = st.text_input("Mobile", label_visibility="collapsed", placeholder="+91")
+        st.markdown("<p class='f-label'>YOUR NAME</p>", unsafe_allow_html=True)
+        name = st.text_input("Name", label_visibility="collapsed", placeholder="Full Name")
+        if st.button("VERIFY ➝"):
+            if name and phone:
+                st.session_state.user = {"name": name, "phone": phone}
+                st.session_state.v = "HOME"
                 st.rerun()
         st.markdown("</div>", unsafe_allow_html=True)
 
 # ==========================================
-# 4. SCREEN: DASHBOARD (SQUAD FOCUS)
+# 4. SCREEN: DASHBOARD
 # ==========================================
-def show_dashboard():
-    # Top Bar
-    c1, c2 = st.columns([5, 1])
-    with c1:
-        st.markdown(f"<span class='label'>User Portfolio</span><br><h2 style='margin:0;'>{st.session_state.user['name']}</h2>", unsafe_allow_html=True)
-    with c2:
-        if st.button("👁️" if not st.session_state.privacy else "🕶️"):
-            st.session_state.privacy = not st.session_state.privacy
-            st.rerun()
+def show_home():
+    st.markdown(f"### Hello, {st.session_state.user['name'].split()[0]}!")
+    
+    # TOTAL BALANCE CARD
+    total = sum(item['b'] for item in st.session_state.g)
+    st.markdown(f"""
+        <div class='elite-card' style='background: #DFFF00; color: black;'>
+            <p style='font-weight:700; font-size:12px; opacity:0.6;'>TOTAL ASSETS LOCKED</p>
+            <h1 style='margin:0; font-weight:900;'>₹{total:,}</h1>
+        </div>
+    """, unsafe_allow_html=True)
 
-    if not st.session_state.goals:
-        st.markdown("<div class='glass-card' style='text-align:center; margin-top:40px;'>No Active Goals</div>", unsafe_allow_html=True)
+    # SQUAD STORIES
+    st.markdown("<p class='f-label'>YOUR SQUAD</p>", unsafe_allow_html=True)
+    st.markdown("""
+        <div class='story-container'>
+            <div class='story-circle' style='background:#222; border-color:#DFFF00;'>YOU</div>
+            <div class='story-circle'>F</div>
+            <div class='story-circle'>H</div>
+            <div class='story-circle'>R</div>
+            <div class='story-circle' style='border-style:dashed; opacity:0.3;'>+</div>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # GOAL CARDS
+    if not st.session_state.g:
+        st.markdown("<div class='elite-card' style='text-align:center; opacity:0.5;'>No Active Goals</div>", unsafe_allow_html=True)
     else:
-        for i, goal in enumerate(st.session_state.goals):
-            prog = (goal['balance'] / goal['target'])
-            offset = 565 - (prog * 565) # Calculation for SVG Ring
+        for i, goal in enumerate(st.session_state.g):
+            prog = (goal['b'] / goal['t'])
+            st.markdown(f"<div class='elite-card'>", unsafe_allow_html=True)
+            st.markdown(f"<b>{goal['n'].upper()}</b>", unsafe_allow_html=True)
+            st.progress(prog)
+            st.markdown(f"<div style='display:flex; justify-content:space-between;'><span class='f-label'>₹{goal['b']}</span><span class='f-label'>TARGET: ₹{goal['t']}</span></div>", unsafe_allow_html=True)
             
-            st.markdown(f"<div class='glass-card'>", unsafe_allow_html=True)
-            
-            # THE RING UI
-            st.markdown(f"""
-                <div class='ring-container'>
-                    <svg class='svg-ring' width='200' height='200'>
-                        <circle class='ring-bg' cx='100' cy='100' r='90'></circle>
-                        <circle class='ring-fill' cx='100' cy='100' r='90' style='stroke-dasharray: 565; stroke-dashoffset: {offset};'></circle>
-                    </svg>
-                    <div style='position:absolute; text-align:center;'>
-                        <div style='font-size:40px;'>{get_icon(goal['name'])}</div>
-                        <div class="{'privacy-blur' if st.session_state.privacy else ''} value">₹{goal['balance']:,}</div>
-                        <div class='label'>of ₹{goal['target']:,}</div>
-                    </div>
-                </div>
-                <div style='text-align:center; font-weight:800; font-size:18px; margin-bottom:10px;'>{goal['name'].upper()}</div>
-            """, unsafe_allow_html=True)
-
-            # THE SQUAD (VISUAL PEOPLE)
-            if goal['type'] == "SQUAD":
-                st.markdown("<span class='label'>Squad Members</span>", unsafe_allow_html=True)
-                st.markdown("<div class='squad-strip'>", unsafe_allow_html=True)
-                # Visual avatars for the people
-                for member in goal['ledger']:
-                    color = "#00FF94" if member == "YOU" else "#444"
-                    st.markdown(f"<div class='avatar' style='border-color:{color};'>{member[0]}</div>", unsafe_allow_html=True)
-                st.markdown(f"<span style='margin-left:15px; font-size:10px; color:#666;'>+ {len(goal['ledger'])} active savers</span></div>", unsafe_allow_html=True)
-
-            # DEPOSIT
-            with st.expander("DEPOSIT"):
-                amt = st.number_input("Amount", min_value=1, key=f"amt_{i}")
-                url = f"upi://pay?pa={MY_UPI_ID}&pn={urllib.parse.quote(MY_NAME)}&am={amt}&cu=INR"
-                st.markdown(f"<a href='{url}' target='_self' style='text-decoration:none;'><div style='background:#00FF94; color:black; padding:12px; border-radius:12px; text-align:center; font-weight:800;'>SEND TO VAULT</div></a>", unsafe_allow_html=True)
-                if st.button("CONFIRM PAYMENT ✅", key=f"conf_{i}"):
-                    goal['balance'] += amt
-                    goal['ledger']['YOU'] += amt
+            with st.expander("TOP UP"):
+                amt = st.number_input("Amount", min_value=1, key=f"a_{i}")
+                url = f"upi://pay?pa={MY_VPA}&pn={urllib.parse.quote(MY_NAME)}&am={amt}&cu=INR"
+                st.markdown(f"<a href='{url}' target='_self' style='text-decoration:none;'><div style='background:#DFFF00; color:black; padding:12px; border-radius:12px; text-align:center; font-weight:800;'>SEND TO LOCKER</div></a>", unsafe_allow_html=True)
+                if st.button("I PAID", key=f"c_{i}"):
+                    goal['b'] += amt
                     st.rerun()
-
-            # WITHDRAW
-            is_ready = goal['balance'] >= goal['target']
-            if st.button("WITHDRAW FUNDS", disabled=not is_ready, key=f"wd_{i}"):
-                st.session_state.goals.pop(i)
-                st.rerun()
-                
             st.markdown("</div>", unsafe_allow_html=True)
 
 # ==========================================
-# 5. SCREEN: SET GOAL (PRECISION INPUT)
+# 5. SCREEN: SET GOAL
 # ==========================================
 def show_create():
     st.markdown("### SET NEW GOAL")
     with st.container():
-        st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
-        g_name = st.text_input("Goal Name (e.g. Car)")
-        g_target = st.number_input("Target Amount (₹)", min_value=1)
-        is_squad = st.toggle("Squad Goal")
-        if st.button("CREATE GOAL ➝"):
-            if g_name and g_target > 0:
-                st.session_state.goals.append({
-                    "name": g_name, "target": g_target, "balance": 0,
-                    "type": "SQUAD" if is_squad else "SOLO",
-                    "ledger": {"YOU": 0, "FEZIN": 500, "RAHUL": 200, "HATHIM": 100} if is_squad else {"YOU": 0}
-                })
-                st.session_state.view = "DASHBOARD"
+        st.markdown("<div class='elite-card'>", unsafe_allow_html=True)
+        name = st.text_input("GOAL NAME", placeholder="e.g. Royal Enfield")
+        target = st.number_input("TARGET AMOUNT (₹)", min_value=1)
+        if st.button("ACTIVATE LOCKER"):
+            if name and target > 0:
+                st.session_state.g.append({"n": name, "t": target, "b": 0})
+                st.session_state.v = "HOME"
                 st.rerun()
         st.markdown("</div>", unsafe_allow_html=True)
 
 # ==========================================
-# 6. NAVIGATION BOILERPLATE
+# 6. SCREEN: SETTINGS (LOGOUT HERE)
 # ==========================================
-if st.session_state.view != "LOGIN":
+def show_settings():
+    st.markdown("### SETTINGS")
+    st.markdown(f"""
+        <div class='elite-card'>
+            <p class='f-label'>USER PROFILE</p>
+            <b>{st.session_state.user['name']}</b><br>
+            <span style='color:#666;'>{st.session_state.user['phone']}</span>
+            <hr style='border-color:#222;'>
+            <p class='f-label'>SETTLEMENT VPA</p>
+            <b>{MY_VPA}</b>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("<div class='logout-btn'>", unsafe_allow_html=True)
+    if st.button("LOGOUT & WIPE DATA"):
+        st.session_state.v = "AUTH"
+        st.session_state.g = []
+        st.rerun()
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# ==========================================
+# NAVIGATION
+# ==========================================
+if st.session_state.v != "AUTH":
     st.markdown("<br><br><br>", unsafe_allow_html=True)
     c1, c2, c3 = st.columns(3)
     with c1: 
-        if st.button("HOME"): st.session_state.view = "DASHBOARD"; st.rerun()
+        if st.button("HOME"): st.session_state.v = "HOME"; st.rerun()
     with c2: 
-        if st.button("GOAL"): st.session_state.view = "CREATE"; st.rerun()
+        if st.button("PLUS"): st.session_state.view = "CREATE"; st.session_state.v = "CREATE"; st.rerun()
     with c3: 
-        if st.button("LOGOUT"): st.session_state.view = "LOGIN"; st.session_state.goals = []; st.rerun()
+        if st.button("GEAR"): st.session_state.v = "SETTINGS"; st.rerun()
 
-if st.session_state.view == "LOGIN": show_login()
-elif st.session_state.view == "DASHBOARD": show_dashboard()
-elif st.session_state.view == "CREATE": show_create()
+if st.session_state.v == "AUTH": show_auth()
+elif st.session_state.v == "HOME": show_home()
+elif st.session_state.v == "CREATE": show_create()
+elif st.session_state.v == "SETTINGS": show_settings()
