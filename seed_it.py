@@ -27,20 +27,36 @@ def inject_custom_css():
     header {visibility: hidden;}
     .stDeployButton {display: none;}
     
-    /* Balance Card */
+    /* Balance Card with Icons */
     .balance-card {
-        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
         border-radius: 20px;
-        padding: 24px;
+        padding: 20px 24px;
         margin: 20px 0;
         border: 1px solid #333;
     }
     
+    .balance-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+    
+    .balance-info {
+        flex: 1;
+    }
+    
+    .balance-label {
+        color: #888;
+        font-size: 13px;
+        margin-bottom: 4px;
+    }
+    
     .balance-amount {
-        font-size: 42px;
+        font-size: 38px;
         font-weight: 700;
         color: #FFFFFF;
-        margin: 8px 0;
+        margin: 4px 0;
     }
     
     .balance-amount.blurred {
@@ -48,28 +64,148 @@ def inject_custom_css():
         user-select: none;
     }
     
-    /* Goal Cards */
+    .balance-actions {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+    
+    .action-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: #2d2d2d;
+        border: 1px solid #3d3d3d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 16px;
+        transition: all 0.2s;
+    }
+    
+    .action-icon:hover {
+        background: #3d3d3d;
+        border-color: #C1FF72;
+    }
+    
+    .action-icon.primary {
+        background: #C1FF72;
+        color: #000000;
+        font-size: 20px;
+        font-weight: 700;
+    }
+    
+    .action-icon.primary:hover {
+        background: #D4FF8F;
+    }
+    
+    /* Section Headers */
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 28px 0 16px 0;
+    }
+    
+    .section-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #FFFFFF;
+    }
+    
+    .view-all-link {
+        color: #C1FF72;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: none;
+    }
+    
+    /* Goal Cards - Horizontal Layout */
     .goal-card {
         background: #1a1a1a;
-        border-radius: 16px;
-        padding: 18px;
+        border-radius: 20px;
+        padding: 16px;
         margin: 12px 0;
         border: 1px solid #2d2d2d;
         transition: all 0.2s;
+        cursor: pointer;
     }
     
     .goal-card:hover {
         border-color: #C1FF72;
-        transform: translateY(-4px);
+        transform: translateY(-2px);
+    }
+    
+    .goal-card-content {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+    
+    .goal-image {
+        width: 70px;
+        height: 70px;
+        border-radius: 12px;
+        background: #2d2d2d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+        flex-shrink: 0;
+    }
+    
+    .goal-details {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .goal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 6px;
+    }
+    
+    .goal-brand {
+        color: #888;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 2px;
+    }
+    
+    .goal-name {
+        font-size: 17px;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+    
+    .goal-progress-text {
+        font-size: 12px;
+        color: #888;
+        margin-bottom: 6px;
+    }
+    
+    .goal-menu {
+        color: #666;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 0 4px;
+    }
+    
+    .goal-menu:hover {
+        color: #C1FF72;
     }
     
     /* Progress Bar */
     .progress-bar-container {
         width: 100%;
-        height: 6px;
+        height: 4px;
         background-color: #2d2d2d;
         border-radius: 10px;
-        margin: 12px 0;
+        margin: 6px 0;
         overflow: hidden;
     }
     
@@ -78,6 +214,24 @@ def inject_custom_css():
         background-color: #C1FF72;
         border-radius: 10px;
         transition: width 0.3s ease;
+    }
+    
+    .goal-amounts {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-top: 6px;
+    }
+    
+    .goal-current {
+        font-size: 18px;
+        font-weight: 700;
+        color: #FFFFFF;
+    }
+    
+    .goal-target {
+        font-size: 13px;
+        color: #666;
     }
     
     /* Onboarding */
@@ -134,6 +288,72 @@ def inject_custom_css():
         color: #FFFFFF !important;
     }
     
+    /* Buttons */
+    .stButton > button {
+        background-color: #C1FF72 !important;
+        color: #000000 !important;
+        border: none !important;
+        border-radius: 16px !important;
+        font-weight: 600 !important;
+        padding: 14px 24px !important;
+        transition: all 0.2s !important;
+        font-size: 15px !important;
+    }
+    
+    .stButton > button:hover {
+        background-color: #D4FF8F !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(193, 255, 114, 0.3) !important;
+    }
+    
+    .stButton > button:disabled {
+        background-color: #3a3a3a !important;
+        color: #666 !important;
+        cursor: not-allowed !important;
+    }
+    
+    /* Amount Pills */
+    .amount-pills {
+        display: flex;
+        gap: 10px;
+        margin: 20px 0;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .amount-pill {
+        background: #2d2d2d;
+        border: 2px solid #3d3d3d;
+        border-radius: 24px;
+        padding: 12px 20px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        color: #FFFFFF;
+    }
+    
+    .amount-pill:hover {
+        background: #C1FF72;
+        color: #000000;
+        border-color: #C1FF72;
+    }
+    
+    .amount-pill.selected {
+        background: #C1FF72;
+        color: #000000;
+        border-color: #C1FF72;
+    }
+    
+    /* Goal Detail Card */
+    .goal-detail-card {
+        background: linear-gradient(135deg, #1a1a2d 0%, #2d2d3d 100%);
+        border-radius: 24px;
+        padding: 32px;
+        text-align: center;
+        margin: 20px 0;
+    }
+    
     /* Transaction History */
     .transaction-item {
         display: flex;
@@ -158,11 +378,11 @@ def inject_custom_css():
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        padding: 6px 12px;
+        padding: 8px 16px;
         background: #2d2d2d;
         border-radius: 20px;
         font-size: 12px;
-        margin-top: 8px;
+        margin-top: 12px;
     }
     
     .lock-status.locked {
@@ -173,6 +393,29 @@ def inject_custom_css():
     .lock-status.unlocked {
         background: #2d3d2d;
         color: #C1FF72;
+    }
+    
+    /* UPI Payment Link */
+    .upi-payment-link {
+        display: inline-block;
+        background-color: #C1FF72;
+        color: #000000;
+        border: none;
+        border-radius: 16px;
+        font-weight: 600;
+        padding: 16px 32px;
+        font-size: 16px;
+        text-decoration: none;
+        transition: all 0.2s;
+        width: 100%;
+        text-align: center;
+        margin: 10px 0;
+    }
+    
+    .upi-payment-link:hover {
+        background-color: #D4FF8F;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(193, 255, 114, 0.3);
     }
     </style>
     """, unsafe_allow_html=True)
@@ -196,7 +439,8 @@ def get_emoji_for_goal(goal_name):
         'sneakers': '👟', 'shoes': '👟',
         'gym': '💪', 'fitness': '🏋️',
         'tv': '📺', 'television': '📺',
-        'furniture': '🛋️', 'sofa': '🛋️'
+        'furniture': '🛋️', 'sofa': '🛋️',
+        'labubu': '🧸', 'toy': '🧸'
     }
     
     for keyword, emoji in emoji_map.items():
@@ -205,11 +449,34 @@ def get_emoji_for_goal(goal_name):
     
     return '🎯'
 
-def generate_upi_link(amount, goal_name, vpa="phathim630@oksbi"):
-    """Generate UPI payment deep link"""
+def generate_upi_payment_link(amount, goal_name, vpa="phathim630@oksbi", payee_name="Seed It"):
+    """
+    Generate UPI deep link that opens Google Pay/PhonePe/Paytm directly
+    
+    Technical Implementation:
+    - Uses upi://pay protocol for mobile deep-linking
+    - mode=02: P2P (Person-to-Person) mode for compatibility
+    - mc=0000: Generic merchant code to avoid "unverified merchant" warnings
+    - URL encoding for special characters (spaces, etc.)
+    """
     txn_id = f"SEED{uuid.uuid4().hex[:8].upper()}"
     
-    upi_uri = f"upi://pay?pa={vpa}&pn=Seed It&am={amount:.2f}&cu=INR&tn={urllib.parse.quote(f'Adding to {goal_name}')}&tr={txn_id}&mode=02&mc=0000"
+    # URL encode the payee name and transaction note
+    encoded_payee_name = urllib.parse.quote(payee_name)
+    encoded_transaction_note = urllib.parse.quote(f"Adding to {goal_name}")
+    
+    # Construct the UPI URI
+    upi_uri = (
+        f"upi://pay?"
+        f"pa={vpa}&"
+        f"pn={encoded_payee_name}&"
+        f"am={amount:.2f}&"
+        f"cu=INR&"
+        f"tn={encoded_transaction_note}&"
+        f"tr={txn_id}&"
+        f"mode=02&"
+        f"mc=0000"
+    )
     
     return upi_uri, txn_id
 
@@ -229,23 +496,6 @@ def calculate_progress_percentage(current, target):
         return 0
     return min(int((current / target) * 100), 100)
 
-def create_circular_progress_svg(percentage, size=200):
-    """Create SVG circular progress ring"""
-    radius = (size / 2) - 10
-    circumference = 2 * 3.14159 * radius
-    offset = circumference - (percentage / 100) * circumference
-    
-    svg = f"""
-    <svg width="{size}" height="{size}">
-        <circle cx="{size/2}" cy="{size/2}" r="{radius}" fill="none" stroke="#2d2d2d" stroke-width="12"/>
-        <circle cx="{size/2}" cy="{size/2}" r="{radius}" fill="none" stroke="#C1FF72" stroke-width="12"
-                stroke-dasharray="{circumference}" stroke-dashoffset="{offset}"
-                transform="rotate(-90 {size/2} {size/2})" stroke-linecap="round"/>
-        <text x="50%" y="50%" text-anchor="middle" dy=".3em" font-size="48" font-weight="700" fill="#FFFFFF">{percentage}%</text>
-    </svg>
-    """
-    return svg
-
 # ==================== SESSION STATE ====================
 
 if 'initialized' not in st.session_state:
@@ -255,11 +505,12 @@ if 'initialized' not in st.session_state:
     st.session_state.goals = []
     st.session_state.privacy_mode = False
     st.session_state.selected_goal_id = None
+    st.session_state.quick_amount = 10
 
 # ==================== VIEWS ====================
 
 def render_onboarding():
-    """Onboarding screen"""
+    """Onboarding screen - KEPT AS ORIGINAL (you said it was perfect!)"""
     st.markdown("""
     <div class="onboarding-container">
         <div class="onboarding-illustration">🌱💰</div>
@@ -282,7 +533,54 @@ def render_onboarding():
             submit = st.form_submit_button("Create Account", use_container_width=True)
         with col2:
             if st.form_submit_button("Skip", use_container_width=True):
-                st.session_state.user = {'name': 'Daisy', 'mobile': '9876543210', 'email': 'demo@seedit.app'}
+                st.session_state.user = {
+                    'name': 'Daisy',
+                    'mobile': '9876543210',
+                    'email': 'demo@seedit.app'
+                }
+                # Add demo goals
+                st.session_state.goals = [
+                    {
+                        'id': str(uuid.uuid4()),
+                        'name': 'Labubu',
+                        'brand': 'Pop Mart',
+                        'emoji': '🧸',
+                        'target_amount': 116.00,
+                        'current_balance': 104.00,
+                        'maturity_date': None,
+                        'created_at': datetime.now().isoformat(),
+                        'ledger': {},
+                        'transactions': [
+                            {'date': '2025-07-10T10:00:00', 'amount': 5.00, 'status': 'confirmed', 'type': 'deposit'},
+                            {'date': '2025-07-08T14:30:00', 'amount': 10.00, 'status': 'confirmed', 'type': 'deposit'},
+                            {'date': '2025-07-02T09:15:00', 'amount': 20.00, 'status': 'confirmed', 'type': 'deposit'},
+                        ]
+                    },
+                    {
+                        'id': str(uuid.uuid4()),
+                        'name': 'AirPods Max',
+                        'brand': 'Apple',
+                        'emoji': '🎧',
+                        'target_amount': 549.00,
+                        'current_balance': 280.00,
+                        'maturity_date': None,
+                        'created_at': datetime.now().isoformat(),
+                        'ledger': {},
+                        'transactions': []
+                    },
+                    {
+                        'id': str(uuid.uuid4()),
+                        'name': 'Sneakers',
+                        'brand': 'FitVille',
+                        'emoji': '👟',
+                        'target_amount': 245.00,
+                        'current_balance': 55.00,
+                        'maturity_date': None,
+                        'created_at': datetime.now().isoformat(),
+                        'ledger': {},
+                        'transactions': []
+                    }
+                ]
                 st.session_state.view = 'DASHBOARD'
                 st.rerun()
         
@@ -298,60 +596,98 @@ def render_onboarding():
                 st.error("Please fill all fields")
 
 def render_dashboard():
-    """Main dashboard"""
+    """Main dashboard - Matches reference image exactly"""
     user = st.session_state.user
     
-    col1, col2 = st.columns([3, 1])
+    # Header with profile avatar
+    col1, col2 = st.columns([4, 1])
     with col1:
-        st.markdown(f"### Hello, {user['name'].split()[0]}")
-        st.caption("Turn dreams into balance")
-    with col2:
-        privacy_icon = "🙈" if st.session_state.privacy_mode else "👁️"
-        if st.button(privacy_icon, key="privacy_toggle"):
-            st.session_state.privacy_mode = not st.session_state.privacy_mode
-            st.rerun()
+        st.markdown(f"""
+        <div style="display: flex; align-items: center; gap: 12px; margin: 20px 0;">
+            <div style="width: 44px; height: 44px; border-radius: 50%; background: #C1FF72; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; color: #000;">
+                {user['name'][0].upper()}
+            </div>
+            <div>
+                <div style="font-size: 15px; font-weight: 600;">Hello, {user['name'].split()[0]}</div>
+                <div style="font-size: 12px; color: #888;">Turn dreams into balance</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
     
+    with col2:
+        if st.button("🔔", key="notifications", help="Notifications"):
+            pass
+    
+    # Balance Card with Action Icons
     total_balance = sum(goal['current_balance'] for goal in st.session_state.goals)
     blur_class = "blurred" if st.session_state.privacy_mode else ""
     
     st.markdown(f"""
     <div class="balance-card">
-        <div style="color: #888; font-size: 13px;">Current Balance</div>
-        <div class="balance-amount {blur_class}">₹{total_balance:,.2f}</div>
+        <div class="balance-header">
+            <div class="balance-info">
+                <div class="balance-label">Current Balance (USD)</div>
+                <div class="balance-amount {blur_class}">${total_balance:,.2f}</div>
+            </div>
+            <div class="balance-actions">
+                <div class="action-icon" title="Refresh">🔄</div>
+                <div class="action-icon" title="History">🕐</div>
+                <div class="action-icon primary" title="Add Money">+</div>
+            </div>
+        </div>
     </div>
     """, unsafe_allow_html=True)
     
-    st.markdown("### My goals")
+    # My Goals Section Header
+    st.markdown("""
+    <div class="section-header">
+        <div class="section-title">My goals</div>
+        <div class="view-all-link">View All ›</div>
+    </div>
+    """, unsafe_allow_html=True)
     
+    # Goals List (Horizontal Layout)
     if st.session_state.goals:
-        cols = st.columns(2)
-        for idx, goal in enumerate(st.session_state.goals):
-            with cols[idx % 2]:
-                progress = calculate_progress_percentage(goal['current_balance'], goal['target_amount'])
-                blur_class = "blurred" if st.session_state.privacy_mode else ""
-                
-                if st.button(f"{goal['emoji']} {goal['name']}", key=f"goal_{goal['id']}", use_container_width=True):
-                    st.session_state.selected_goal_id = goal['id']
-                    st.session_state.view = 'GOAL_DETAIL'
-                    st.rerun()
-                
-                st.markdown(f"""
-                <div class="goal-card">
-                    <div style="font-size: 48px; margin-bottom: 12px;">{goal['emoji']}</div>
-                    <div style="color: #888; font-size: 11px; text-transform: uppercase;">{goal.get('brand', 'Goal')}</div>
-                    <div style="font-size: 18px; font-weight: 600; margin: 4px 0;">{goal['name']}</div>
-                    <div style="font-size: 13px; color: #888; margin: 8px 0;">{progress}%</div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar-fill" style="width: {progress}%"></div>
+        for goal in st.session_state.goals:
+            progress = calculate_progress_percentage(goal['current_balance'], goal['target_amount'])
+            blur_class = "blurred" if st.session_state.privacy_mode else ""
+            
+            # Clickable goal card
+            if st.button(f"view_{goal['id']}", key=f"goal_btn_{goal['id']}", label_visibility="collapsed", use_container_width=True):
+                st.session_state.selected_goal_id = goal['id']
+                st.session_state.view = 'GOAL_DETAIL'
+                st.rerun()
+            
+            st.markdown(f"""
+            <div class="goal-card">
+                <div class="goal-card-content">
+                    <div class="goal-image">{goal['emoji']}</div>
+                    <div class="goal-details">
+                        <div class="goal-header">
+                            <div>
+                                <div class="goal-brand">{goal.get('brand', 'Goal')}</div>
+                                <div class="goal-name">{goal['name']}</div>
+                                <div class="goal-progress-text">{progress}%</div>
+                            </div>
+                            <div class="goal-menu">⋮</div>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill" style="width: {progress}%"></div>
+                        </div>
+                        <div class="goal-amounts">
+                            <div class="goal-current {blur_class}">${goal['current_balance']:,.2f}</div>
+                            <div class="goal-target {blur_class}">/${goal['target_amount']:,.2f}</div>
+                        </div>
                     </div>
-                    <div style="font-size: 20px; font-weight: 700;" class="{blur_class}">₹{goal['current_balance']:,.2f}</div>
-                    <div style="font-size: 14px; color: #666;" class="{blur_class}">/ ₹{goal['target_amount']:,.2f}</div>
                 </div>
-                """, unsafe_allow_html=True)
+            </div>
+            """, unsafe_allow_html=True)
     else:
         st.info("No goals yet! Create your first goal below 👇")
     
-    if st.button("➕ New goal", key="new_goal", use_container_width=True):
+    # New Goal Button
+    st.markdown("<br>", unsafe_allow_html=True)
+    if st.button("+ New goal", key="new_goal", use_container_width=True):
         st.session_state.view = 'CREATE_GOAL'
         st.rerun()
 
@@ -366,7 +702,7 @@ def render_create_goal():
         with col1:
             brand = st.text_input("Brand/Category", placeholder="e.g., Apple")
         with col2:
-            target_amount = st.number_input("Target Amount (₹)", min_value=1, value=1000, step=100)
+            target_amount = st.number_input("Target Amount ($)", min_value=1, value=100, step=10)
         
         maturity_date = st.date_input("Lock Until (Optional)", value=None, min_value=datetime.now().date())
         
@@ -397,7 +733,7 @@ def render_create_goal():
                 st.rerun()
 
 def render_goal_detail():
-    """Goal detail view"""
+    """Goal detail view - Matches reference with direct UPI app opening"""
     goal_id = st.session_state.selected_goal_id
     goal = next((g for g in st.session_state.goals if g['id'] == goal_id), None)
     
@@ -405,85 +741,115 @@ def render_goal_detail():
         st.error("Goal not found")
         return
     
-    if st.button("← Back", key="back"):
-        st.session_state.view = 'DASHBOARD'
-        st.rerun()
-    
-    st.markdown(f"""
-    <div style="text-align: center; margin: 20px 0;">
-        <div style="font-size: 80px;">{goal['emoji']}</div>
-        <div style="font-size: 12px; color: #888; text-transform: uppercase;">{goal['brand']}</div>
-        <div style="font-size: 28px; font-weight: 700; margin: 8px 0;">{goal['name']}</div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    progress = calculate_progress_percentage(goal['current_balance'], goal['target_amount'])
-    
-    col1, col2, col3 = st.columns([1, 2, 1])
+    # Header with back button and menu
+    col1, col2, col3 = st.columns([1, 3, 1])
+    with col1:
+        if st.button("←", key="back"):
+            st.session_state.view = 'DASHBOARD'
+            st.rerun()
     with col2:
         st.markdown(f"""
         <div style="text-align: center;">
-            <div style="font-size: 32px; font-weight: 700;">₹{goal['current_balance']:,.2f}</div>
-            <div style="font-size: 14px; color: #666;">/ ₹{goal['target_amount']:,.2f}</div>
-            <div style="font-size: 16px; color: #888; margin-top: 8px;">{progress}%</div>
+            <div style="font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px;">{goal['brand']}</div>
+            <div style="font-size: 20px; font-weight: 700; margin-top: 2px;">{goal['name']}</div>
         </div>
         """, unsafe_allow_html=True)
-        st.markdown(create_circular_progress_svg(progress, 180), unsafe_allow_html=True)
+    with col3:
+        if st.button("⋮", key="menu"):
+            pass
     
+    # Quick Amount Pills
+    st.markdown('<div class="amount-pills">', unsafe_allow_html=True)
+    cols = st.columns(5)
+    quick_amounts = [5, 10, 50, 100, 116]
+    for idx, amount in enumerate(quick_amounts):
+        with cols[idx]:
+            pill_class = "selected" if st.session_state.quick_amount == amount else ""
+            if st.button(f"${amount}", key=f"quick_{amount}", use_container_width=True):
+                st.session_state.quick_amount = amount
+                st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Large Goal Display Card
+    progress = calculate_progress_percentage(goal['current_balance'], goal['target_amount'])
+    
+    st.markdown(f"""
+    <div class="goal-detail-card">
+        <div style="font-size: 100px; margin: 20px 0;">{goal['emoji']}</div>
+        <div style="font-size: 18px; font-weight: 600; margin: 12px 0;">{goal['name']}</div>
+        <div style="font-size: 36px; font-weight: 700; margin: 8px 0;">${goal['current_balance']:,.2f}</div>
+        <div style="font-size: 14px; color: #888;">/${goal['target_amount']:,.2f}</div>
+        <div style="font-size: 18px; font-weight: 600; color: #C1FF72; margin-top: 12px;">{progress}%</div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Lock Status
     is_unlocked = is_goal_unlocked(goal)
     lock_emoji = "🔓" if is_unlocked else "🔒"
     lock_text = "Unlocked - Ready to Harvest!" if is_unlocked else "Locked - Keep Saving!"
     lock_class = "unlocked" if is_unlocked else "locked"
     
-    st.markdown(f'<div style="text-align: center;"><span class="lock-status {lock_class}">{lock_emoji} {lock_text}</span></div>', unsafe_allow_html=True)
+    st.markdown(f'<div style="text-align: center; margin: 16px 0;"><span class="lock-status {lock_class}">{lock_emoji} {lock_text}</span></div>', unsafe_allow_html=True)
     
-    st.markdown("---")
-    st.markdown("### 💳 Top-up Goal")
-    
-    custom_amount = st.number_input("Amount (₹)", min_value=1, value=10, step=1)
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("🔗 Generate UPI Link", use_container_width=True):
-            upi_link, txn_id = generate_upi_link(custom_amount, goal['name'])
-            st.code(upi_link, language=None)
-            st.info(f"Transaction ID: {txn_id}")
-    
-    with col2:
-        if st.button("✅ Confirm Payment", use_container_width=True):
-            goal['current_balance'] += custom_amount
-            goal['transactions'].append({
-                'date': datetime.now().isoformat(),
-                'amount': custom_amount,
-                'status': 'pending',
-                'type': 'deposit'
-            })
-            st.success(f"₹{custom_amount} added!")
-            st.rerun()
-    
-    if is_unlocked:
-        if st.button("🌾 Harvest (Withdraw)", use_container_width=True, type="primary"):
-            st.success(f"🎉 Congratulations! You've unlocked ₹{goal['current_balance']:,.2f}!")
-            st.balloons()
-    else:
-        st.button("🌾 Harvest (Locked)", use_container_width=True, disabled=True)
-        remaining = goal['target_amount'] - goal['current_balance']
-        st.caption(f"💡 Save ₹{remaining:,.2f} more to unlock!")
-    
-    st.markdown("---")
-    st.markdown("### Transaction history")
+    # Transaction History Section
+    st.markdown("""
+    <div style="display: flex; justify-content: space-between; align-items: center; margin: 32px 0 16px 0;">
+        <div style="font-size: 20px; font-weight: 700;">Transaction history</div>
+        <div style="color: #C1FF72; font-size: 14px; cursor: pointer;">View All ›</div>
+    </div>
+    """, unsafe_allow_html=True)
     
     if goal['transactions']:
-        for txn in sorted(goal['transactions'], key=lambda x: x['date'], reverse=True)[:5]:
+        for txn in sorted(goal['transactions'], key=lambda x: x['date'], reverse=True)[:3]:
             txn_date = datetime.fromisoformat(txn['date']).strftime("%d %B %Y")
             st.markdown(f"""
             <div class="transaction-item">
                 <div class="transaction-date">{txn_date}</div>
-                <div class="transaction-amount">+₹{txn['amount']:.2f}</div>
+                <div class="transaction-amount">+${txn['amount']:.2f}</div>
             </div>
             """, unsafe_allow_html=True)
     else:
-        st.info("No transactions yet")
+        st.markdown('<div style="text-align: center; color: #666; padding: 20px;">No transactions yet</div>', unsafe_allow_html=True)
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # UPI Payment - Opens Google Pay/PhonePe/Paytm directly
+    amount_to_add = st.session_state.quick_amount
+    upi_link, txn_id = generate_upi_payment_link(amount_to_add, goal['name'])
+    
+    # Direct link that opens payment app
+    st.markdown(f"""
+    <a href="{upi_link}" target="_self" class="upi-payment-link">
+        💳 Top up goal balance (${amount_to_add})
+    </a>
+    """, unsafe_allow_html=True)
+    
+    st.caption(f"💡 Clicking above will open your payment app (Google Pay, PhonePe, Paytm, etc.)")
+    
+    # Manual confirmation for demo purposes
+    if st.button("✅ I've completed the payment", key="confirm_payment", use_container_width=True):
+        goal['current_balance'] += amount_to_add
+        goal['transactions'].append({
+            'date': datetime.now().isoformat(),
+            'amount': amount_to_add,
+            'status': 'confirmed',
+            'type': 'deposit'
+        })
+        st.success(f"✅ ${amount_to_add} added to {goal['name']}!")
+        st.balloons()
+        st.rerun()
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # Withdraw/Harvest Button
+    if is_unlocked:
+        if st.button("🌾 Harvest (Withdraw)", use_container_width=True, type="primary"):
+            st.success(f"🎉 Congratulations! You've unlocked ${goal['current_balance']:,.2f}!")
+            st.balloons()
+    else:
+        st.button("🌾 Harvest (Locked)", use_container_width=True, disabled=True)
+        remaining = goal['target_amount'] - goal['current_balance']
+        st.caption(f"💡 Save ${remaining:,.2f} more to unlock!")
 
 def render_settings():
     """Settings page"""
@@ -513,8 +879,8 @@ def render_settings():
     st.markdown(f"""
     <div style="background: #1a1a1a; padding: 20px; border-radius: 12px;">
         <div style="font-size: 14px; color: #888;">Your Progress</div>
-        <div style="font-size: 24px; font-weight: 700; margin: 8px 0;">₹{total_saved:,.2f}</div>
-        <div style="color: #666;">of ₹{total_target:,.2f} across {total_goals} goals</div>
+        <div style="font-size: 24px; font-weight: 700; margin: 8px 0;">${total_saved:,.2f}</div>
+        <div style="color: #666;">of ${total_target:,.2f} across {total_goals} goals</div>
     </div>
     """, unsafe_allow_html=True)
     
