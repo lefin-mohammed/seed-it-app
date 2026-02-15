@@ -4,123 +4,244 @@ import urllib.parse
 from datetime import datetime, date
 
 # ==========================================
-# 1. PREMIUM MOBILE UI
+# 1. PREMIUM NEUMORPHIC UI (LIGHT THEME)
 # ==========================================
-st.set_page_config(page_title="Seed It Prime", page_icon="🌱", layout="centered")
+st.set_page_config(page_title="Seed It Infinity", page_icon="🌱", layout="centered")
 
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap');
-    .stApp { background: #000000; color: #FFFFFF; font-family: 'Outfit', sans-serif; }
+    
+    /* MOBILE LIGHT THEME */
+    .stApp { 
+        background: #F0F4F3; 
+        color: #1A1A1A; 
+        font-family: 'Outfit', sans-serif;
+    }
+
+    /* NEUMORPHIC CARDS */
     .app-card {
-        background: linear-gradient(145deg, #0F0F0F, #050505);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 24px; padding: 20px; margin-bottom: 15px;
+        background: #F0F4F3;
+        border-radius: 30px;
+        padding: 25px;
+        margin-bottom: 20px;
+        box-shadow: 10px 10px 20px #D1D9D7, -10px -10px 20px #FFFFFF;
     }
-    .mint { color: #00FF94; font-weight: 800; }
+    
+    .accent-text { color: #00A67E; font-weight: 800; }
+    .sub-text { color: #8E9A97; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+
+    /* CIRCULAR PROGRESS RING SIMULATION */
+    .progress-ring {
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        background: conic-gradient(#00A67E var(--prog), #E0EAE8 0);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 20px auto;
+        box-shadow: inset 5px 5px 10px #D1D9D7, inset -5px -5px 10px #FFFFFF;
+    }
+    .progress-inner {
+        width: 150px;
+        height: 150px;
+        background: #F0F4F3;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 5px 5px 10px #D1D9D7, -5px -5px 10px #FFFFFF;
+    }
+
+    /* TOP-UP & WITHDRAW BUTTONS */
+    .action-btn {
+        background: #F0F4F3;
+        border: none;
+        border-radius: 15px;
+        padding: 12px 20px;
+        box-shadow: 5px 5px 10px #D1D9D7, -5px -5px 10px #FFFFFF;
+        font-weight: 700;
+        color: #1A1A1A;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* BOTTOM NAV */
+    .nav-item { text-align: center; font-size: 10px; font-weight: 700; color: #8E9A97; }
+    .nav-active { color: #00A67E; }
+
+    /* PRIVACY BLUR */
+    .privacy-blur { filter: blur(8px); pointer-events: none; }
+
+    /* HIDDEN ELEMENTS */
+    header {visibility: hidden;}
+    footer {visibility: hidden;}
     div.stButton > button {
-        background: #00FF94; color: black; border-radius: 14px;
-        padding: 14px; font-weight: 800; border: none; width: 100%;
+        background: #00A67E; color: white; border-radius: 15px;
+        padding: 15px; font-weight: 800; border: none; width: 100%;
+        box-shadow: 5px 5px 15px rgba(0,166,126,0.3);
     }
-    header {visibility: hidden;} footer {visibility: hidden;}
     </style>
 """, unsafe_allow_html=True)
 
 # ==========================================
-# 2. CONFIG (LEFIN'S DATA)
+# 2. CORE CONFIG & SMART ICONS
 # ==========================================
-MY_UPI_ID = "shiflinsakkir112-1@oksbi" 
-MY_NAME = "Shiflin Sakkkr"
+MY_UPI_ID = "phathim630@oksbi" 
+MY_NAME = "Hathim p"
 
+# Smart Category Logic
+def get_goal_icon(name):
+    name = name.lower()
+    if any(x in name for x in ["car", "drive", "vehicle"]): return "🚗"
+    if any(x in name for x in ["phone", "iphone", "mobile"]): return "📱"
+    if any(x in name for x in ["home", "house", "rent"]): return "🏠"
+    if any(x in name for x in ["travel", "trip", "flight", "goa"]): return "✈️"
+    if any(x in name for x in ["bike", "cycle", "royal"]): return "🏍️"
+    if any(x in name for x in ["food", "pizza", "party"]): return "🍕"
+    return "🎯"
+
+# Initialize Session
 if 'view' not in st.session_state: st.session_state.view = "AUTH"
 if 'goals' not in st.session_state: st.session_state.goals = []
-if 'history' not in st.session_state: st.session_state.history = []
+if 'privacy' not in st.session_state: st.session_state.privacy = False
+if 'auto_save' not in st.session_state: st.session_state.auto_save = False
 
 # ==========================================
-# 3. ROUTING LOGIC
+# 3. APP SCREENS
 # ==========================================
 
-if st.session_state.view == "AUTH":
-    st.markdown("<br><br><h1 style='text-align:center;'>SEED <span class='mint'>IT</span></h1>", unsafe_allow_html=True)
+def show_auth():
+    st.markdown("<br><br><h1 style='text-align:center; color:#00A67E;'>🌱 Seed It</h1>", unsafe_allow_html=True)
     with st.container():
         st.markdown("<div class='app-card'>", unsafe_allow_html=True)
-        u_name = st.text_input("FULL NAME", key="u_name")
-        u_age = st.text_input("AGE", key="u_age")
-        if st.button("UNLOCK VAULT 🔓"):
-            if u_name and u_age:
-                st.session_state.user = {"name": u_name, "age": u_age}
-                st.session_state.view = "HOME"
+        name = st.text_input("NAME", placeholder="Lefin Mohammed")
+        age = st.text_input("AGE", placeholder="19")
+        phone = st.text_input("MOBILE", placeholder="+91 XXXX")
+        if st.button("AUTHENTICATE"):
+            if name and age and phone:
+                st.session_state.user = {"name": name, "age": age, "phone": phone}
+                st.session_state.view = "DASHBOARD"
                 st.rerun()
         st.markdown("</div>", unsafe_allow_html=True)
 
-elif st.session_state.view == "HOME":
-    st.markdown(f"### Hello, {st.session_state.user['name'].split()[0]} 👋")
-    total_val = sum(g['balance'] for g in st.session_state.goals)
-    st.markdown(f"<div class='app-card' style='background:linear-gradient(135deg, #00FF94, #00804A); color:black;'><div style='font-size:10px; font-weight:bold; opacity:0.8;'>TOTAL VALUE</div><div style='font-size:36px; font-weight:900;'>₹{total_val:,}</div></div>", unsafe_allow_html=True)
+def show_dashboard():
+    # Header with Privacy Toggle
+    c1, c2 = st.columns([4, 1])
+    with c1:
+        st.markdown(f"**Hello, {st.session_state.user['name']}!**")
+    with c2:
+        if st.button("👁️" if not st.session_state.privacy else "🕶️"):
+            st.session_state.privacy = not st.session_state.privacy
+            st.rerun()
 
-    for i, goal in enumerate(st.session_state.goals):
-        prog = min(max(goal['balance'] / goal['target'], 0.0), 1.0) if goal['target'] > 0 else 0
-        st.markdown(f"<div class='app-card'><b>{goal['name'].upper()}</b>", unsafe_allow_html=True)
-        st.progress(prog)
+    if not st.session_state.goals:
+        st.markdown("<div class='app-card' style='text-align:center; padding:50px;'><h3 style='color:#8E9A97;'>Your Garden is Empty</h3><p>Tap + to plant your first goal</p></div>", unsafe_allow_html=True)
+    else:
+        # TABS FOR GOALS
+        goal_names = [g['name'] for g in st.session_state.goals]
+        selected_goal_name = st.tabs(goal_names)
         
-        with st.expander("💸 DEPOSIT FUNDS"):
-            amt = st.number_input("Amount (₹)", min_value=1.0, key=f"amt_{i}")
-            
-            # --- IMPROVED UPI INTENT ---
-            encoded_name = urllib.parse.quote(MY_NAME)
-            # tr = Transaction Reference (Helps GPay identify the request)
-            # mode = 02 (P2P transaction mode)
-            upi_url = f"upi://pay?pa={MY_UPI_ID}&pn={encoded_name}&am={amt}&cu=INR&mode=02&tr=SEED{int(time.time())}"
-            
-            # 1. THE BUTTON
-            st.markdown(f"""<a href="{upi_url}" target="_self" style="text-decoration:none;"><div style="background:#111; color:#00FF94; border:1px solid #00FF94; padding:15px; border-radius:12px; text-align:center; font-weight:800; margin-bottom:10px;">OPEN UPI APP 📱</div></a>""", unsafe_allow_html=True)
-            
-            # 2. THE FALLBACK (COPY ID)
-            st.code(MY_UPI_ID, language="text")
-            st.caption("If button fails: Copy ID & pay manually in GPay")
+        for i, tab in enumerate(selected_goal_name):
+            with tab:
+                goal = st.session_state.goals[i]
+                prog_pct = int((goal['balance'] / goal['target']) * 100) if goal['target'] > 0 else 0
+                prog_clamped = min(max(prog_pct, 0), 100)
+                
+                # Dynamic Background Logic (Subtle Overlay)
+                bg_opacity = prog_clamped / 200 # Max 0.5 opacity
+                st.markdown(f"""
+                    <div class='app-card' style='background: rgba(0, 166, 126, {bg_opacity});'>
+                        <div class='progress-ring' style='--prog: {prog_clamped}%;'>
+                            <div class='progress-inner'>
+                                <div style='font-size:40px;'>{get_goal_icon(goal['name'])}</div>
+                                <div class="{'privacy-blur' if st.session_state.privacy else ''}" style='font-size:20px; font-weight:900;'>₹{goal['balance']:,}</div>
+                                <div class='sub-text'>of ₹{goal['target']:,}</div>
+                            </div>
+                        </div>
+                """, unsafe_allow_html=True)
 
-            # 3. THE QR CODE
-            qr_api = f"https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={urllib.parse.quote(upi_url)}"
-            st.image(qr_api, width=150, caption="Scan to Pay")
+                # Action Buttons (Top Up / Withdraw)
+                col_a, col_b = st.columns(2)
+                with col_a:
+                    with st.expander("➕ Top up"):
+                        amt = st.number_input("Amount", min_value=1, key=f"amt_{i}")
+                        upi_url = f"upi://pay?pa={MY_UPI_ID}&pn={urllib.parse.quote(MY_NAME)}&am={amt}&cu=INR&mc=0000"
+                        st.markdown(f"<a href='{upi_url}' target='_self'><div style='background:#00A67E; color:white; padding:10px; border-radius:10px; text-align:center;'>Open UPI App</div></a>", unsafe_allow_html=True)
+                        if st.button("I have Paid ✅", key=f"pay_{i}"):
+                            goal['balance'] += amt
+                            st.toast("Contribution logged!")
+                            time.sleep(0.5)
+                            st.rerun()
+                with col_b:
+                    is_locked = goal['balance'] < goal['target']
+                    if st.button("🔓 Withdraw", disabled=is_locked, key=f"wd_{i}"):
+                        st.balloons()
+                        st.session_state.goals.pop(i)
+                        st.rerun()
+                
+                # SQUAD LEDGER
+                if goal['type'] == "SQUAD":
+                    st.markdown("<hr style='border: 0.5px solid #E0EAE8;'>", unsafe_allow_html=True)
+                    st.markdown("**Squad Contributions**")
+                    ledger_cols = st.columns(len(goal['ledger']))
+                    for idx, (member, m_amt) in enumerate(goal['ledger'].items()):
+                        with ledger_cols[idx]:
+                            st.markdown(f"<div style='font-size:10px; color:#8E9A97;'>{member}</div><div style='font-weight:bold;'>₹{m_amt}</div>", unsafe_allow_html=True)
+                
+                st.markdown("</div>", unsafe_allow_html=True)
 
-            if st.button("CONFIRM PAYMENT ✅", key=f"c_{i}"):
-                goal['balance'] += amt
-                st.session_state.history.append({"msg": f"Seeded {goal['name']}", "amt": f"+₹{amt}"})
+def show_plant():
+    st.markdown("### 🌱 Plant Seed")
+    with st.container():
+        st.markdown("<div class='app-card'>", unsafe_allow_html=True)
+        name = st.text_input("Goal Name (e.g., iPhone 17)", key="g_name")
+        target = st.number_input("Target Amount (₹)", min_value=1, key="g_target")
+        is_squad = st.toggle("Squad Goal")
+        if st.button("Plant Goal"):
+            if name and target > 0:
+                st.session_state.goals.append({
+                    "name": name, "target": target, "balance": 0,
+                    "type": "SQUAD" if is_squad else "SOLO",
+                    "ledger": {"YOU": 0, "FEZIN": 250, "RAHUL": 100} if is_squad else {"YOU": 0}
+                })
+                st.session_state.view = "DASHBOARD"
                 st.rerun()
-
-        # WITHDRAWAL (MATURITY CHECK)
-        can_withdraw = goal['balance'] >= goal['target']
-        if goal['date'] and date.today() < goal['date']: can_withdraw = False
-
-        if can_withdraw:
-            if st.button("🏆 HARVEST", key=f"h_{i}"):
-                st.session_state.goals.pop(i); st.rerun()
-        else:
-            st.button("🔒 LOCKED", disabled=True, key=f"l_{i}")
         st.markdown("</div>", unsafe_allow_html=True)
 
-# NAVIGATION BAR
+def show_settings():
+    st.markdown("### Settings")
+    with st.container():
+        st.markdown("<div class='app-card'>", unsafe_allow_html=True)
+        st.session_state.auto_save = st.toggle("Daily Automatic Savings", value=st.session_state.auto_save)
+        st.caption("When enabled, Seed It will round up your transactions and save the change.")
+        st.markdown("<hr>", unsafe_allow_html=True)
+        st.markdown(f"**Linked Account:** {MY_UPI_ID}")
+        if st.button("Log Out"):
+            st.session_state.view = "AUTH"
+            st.session_state.goals = []
+            st.rerun()
+        st.markdown("</div>", unsafe_allow_html=True)
+
+# ==========================================
+# 4. NAVIGATION CONTROL
+# ==========================================
 if st.session_state.view != "AUTH":
     st.markdown("<br><br><br>", unsafe_allow_html=True)
-    c1, c2, c3 = st.columns(3)
-    with c1: 
-        if st.button("🏠"): st.session_state.view = "HOME"; st.rerun()
-    with c2: 
-        if st.button("➕"): 
-            st.session_state.view = "CREATE"
-            st.rerun()
-    with c3: 
-        if st.button("⚙️"): st.session_state.view = "SETTINGS"; st.rerun()
+    # Labeled Footer Nav
+    n1, n2, n3 = st.columns(3)
+    with n1:
+        if st.button("Dashboard"): st.session_state.view = "DASHBOARD"; st.rerun()
+    with n2:
+        if st.button("Plant Seed"): st.session_state.view = "PLANT"; st.rerun()
+    with n3:
+        if st.button("Settings"): st.session_state.view = "SETTINGS"; st.rerun()
 
-# OTHER SCREENS
-if st.session_state.view == "CREATE":
-    st.markdown("### Plant a Seed")
-    with st.container():
-        st.markdown("<div class='app-card'>", unsafe_allow_html=True)
-        g_name = st.text_input("GOAL NAME")
-        g_target = st.number_input("TARGET (₹)", min_value=1.0)
-        g_date = st.date_input("LOCK UNTIL")
-        if st.button("PLANT 🌱"):
-            st.session_state.goals.append({"name": g_name, "target": g_target, "balance": 0, "date": g_date})
-            st.session_state.view = "HOME"; st.rerun()
-        st.markdown("</div>", unsafe_allow_html=True)
+# Router
+if st.session_state.view == "AUTH": show_auth()
+elif st.session_state.view == "DASHBOARD": show_dashboard()
+elif st.session_state.view == "PLANT": show_plant()
+elif st.session_state.view == "SETTINGS": show_settings()
