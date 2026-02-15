@@ -4,185 +4,243 @@ import urllib.parse
 from datetime import datetime, date
 
 # ==========================================
-# 1. SIGNATURE UI ENGINE (OLED BLACK & LIME)
+# 1. DESIGN SYSTEM (LIGHT & CLEAN)
 # ==========================================
-st.set_page_config(page_title="Seed It Signature", page_icon="💳", layout="centered")
+st.set_page_config(page_title="Seed It Pro", page_icon="🏦", layout="centered")
 
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
     
-    .stApp { background: #000000; color: #FFFFFF; font-family: 'Outfit', sans-serif; }
+    /* GLOBAL RESET */
+    .stApp { background: #F8F9F8; color: #1A1C1E; font-family: 'Inter', sans-serif; }
+    
+    /* HEADER STYLING */
+    .header-box { display: flex; align-items: center; justify-content: space-between; padding: 20px 0; }
+    .avatar-circle { width: 45px; height: 45px; border-radius: 50%; background: #E2E8F0; display: flex; align-items: center; justify-content: center; font-size: 20px; }
 
-    /* ELITE CARD COMPONENT */
-    .f-card {
-        background: #0A0A0A;
-        border: 1px solid #151515;
+    /* CARD SYSTEM */
+    .white-card {
+        background: #FFFFFF;
         border-radius: 28px;
         padding: 24px;
-        margin-bottom: 16px;
-        transition: 0.3s ease;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        border: 1px solid rgba(0, 0, 0, 0.02);
     }
+
+    /* THE PROGRESS RING (REPLICATING IMAGE 2) */
+    .ring-container {
+        width: 200px; height: 200px; margin: 20px auto;
+        position: relative; display: flex; align-items: center; justify-content: center;
+    }
+    .svg-ring { transform: rotate(-90deg); }
+    .ring-bg { fill: none; stroke: #F0F2F0; stroke-width: 10; }
+    .ring-fill { 
+        fill: none; stroke: #189F8D; stroke-width: 10; 
+        stroke-linecap: round; transition: all 1s ease-in-out;
+    }
+
+    /* TRANSACTION LIST */
+    .tx-item {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 16px 0; border-bottom: 1px solid #F1F3F4;
+    }
+    .tx-icon { width: 40px; height: 40px; border-radius: 12px; background: #F1F8F7; display: flex; align-items: center; justify-content: center; margin-right: 15px; }
+
+    /* TYPOGRAPHY */
+    .title-large { font-size: 32px; font-weight: 800; color: #1A1C1E; margin: 5px 0; }
+    .label-muted { color: #8C9196; font-size: 13px; font-weight: 500; }
+    .mint-text { color: #189F8D; font-weight: 700; }
+
+    /* BUTTONS (TOP UP / WITHDRAW) */
+    .btn-row { display: flex; gap: 15px; margin-top: 15px; }
+    .btn-main {
+        flex: 1; padding: 14px; border-radius: 16px; border: none;
+        font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+        transition: transform 0.1s;
+    }
+    .btn-topup { background: #E8F5F3; color: #189F8D; }
+    .btn-withdraw { background: #F8F9F8; color: #5F6368; border: 1px solid #E2E8F0; }
+
+    /* NAVIGATION */
+    .nav-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #FFFFFF; border-top: 1px solid #F1F3F4; display: flex; justify-content: space-around; padding: 15px 0; z-index: 1000; }
     
-    .accent { color: #CBFF00; font-weight: 900; }
-    .muted { color: #444444; font-size: 10px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; }
-
-    /* SQUAD AVATARS */
-    .squad-group { display: flex; align-items: center; margin-top: 10px; }
-    .squad-user {
-        width: 30px; height: 30px; border-radius: 50%; border: 2px solid #000;
-        background: #1A1A1A; display: flex; align-items: center; justify-content: center;
-        font-size: 9px; font-weight: 900; margin-right: -10px; color: #CBFF00;
-    }
-
-    /* NAVIGATION BAR */
-    .nav-bar {
-        position: fixed; bottom: 0; left: 0; width: 100%;
-        background: rgba(0,0,0,0.8); backdrop-filter: blur(15px);
-        display: flex; justify-content: space-around; padding: 20px 0;
-        border-top: 1px solid #111; z-index: 999;
-    }
-
-    /* CUSTOM PROGRESS */
-    .stProgress > div > div > div > div { background-color: #CBFF00; height: 8px; border-radius: 4px; }
-
-    /* INPUTS & BUTTONS */
-    div.stButton > button {
-        background: #CBFF00; color: #000; border-radius: 16px;
-        padding: 14px; font-weight: 900; border: none; width: 100%;
-    }
-    .logout-zone button { background: #FF3B30 !important; color: white !important; }
-
     header, footer, .stDeployButton { visibility: hidden; }
     </style>
 """, unsafe_allow_html=True)
 
 # ==========================================
-# 2. CORE SYSTEM DATA
+# 2. LOGIC & STATE
 # ==========================================
-MY_VPA = "phathim630@oksbi" 
+MY_UPI_ID = "phathim630@oksbi" 
 MY_NAME = "Hathim p"
 
-if 'v' not in st.session_state: st.session_state.v = "AUTH"
-if 'g' not in st.session_state: st.session_state.g = []
-if 'p' not in st.session_state: st.session_state.p = False # Privacy Mode
+if 'view' not in st.session_state: st.session_state.view = "LOGIN"
+if 'goals' not in st.session_state: st.session_state.goals = []
+if 'selected_goal' not in st.session_state: st.session_state.selected_goal = None
+
+def get_icon(name):
+    name = name.lower()
+    if "car" in name: return "🚗"
+    if "phone" in name: return "📱"
+    if "home" in name: return "🏠"
+    return "🎯"
 
 # ==========================================
 # 3. SCREEN: LOGIN
 # ==========================================
-def show_auth():
-    st.markdown("<br><br><h1 style='text-align:center; font-weight:900; font-size:50px;'>SEED<span class='accent'>IT</span></h1>", unsafe_allow_html=True)
+def show_login():
+    st.markdown("<div style='text-align:center; padding-top:50px;'>", unsafe_allow_html=True)
+    st.markdown("<h1 style='color:#189F8D; font-weight:800;'>Seed It</h1>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+    
     with st.container():
-        st.markdown("<div class='f-card'>", unsafe_allow_html=True)
-        name = st.text_input("NAME", placeholder="Full Name")
-        age = st.text_input("AGE", placeholder="19")
-        phone = st.text_input("MOBILE", placeholder="+91")
-        if st.button("VERIFY IDENTITY ➝"):
-            if name and age and phone:
-                st.session_state.user = {"n": name, "a": age, "p": phone}
-                st.session_state.v = "HOME"
+        st.markdown("<div class='white-card'>", unsafe_allow_html=True)
+        name = st.text_input("Full Name", placeholder="Robert Fox")
+        phone = st.text_input("Mobile Number", placeholder="+91")
+        if st.button("Get Started", use_container_width=True):
+            if name and phone:
+                st.session_state.user = {"name": name, "phone": phone}
+                st.session_state.view = "HOME"
                 st.rerun()
         st.markdown("</div>", unsafe_allow_html=True)
 
 # ==========================================
-# 4. SCREEN: DASHBOARD
+# 4. SCREEN: HOME (DASHBOARD)
 # ==========================================
 def show_home():
-    # Header
-    c1, c2 = st.columns([5,1])
-    with c1: st.markdown(f"### Hello, {st.session_state.user['n'].split()[0]}")
-    with c2: 
-        if st.button("👁️"): 
-            st.session_state.p = not st.session_state.p
-            st.rerun()
-
-    # Total Wealth Card
-    total = sum(item['b'] for item in st.session_state.g)
+    # Top Header
     st.markdown(f"""
-        <div class='f-card' style='background: #CBFF00; color: #000;'>
-            <p class='muted' style='color:#000; opacity:0.6;'>NET ASSETS SECURED</p>
-            <h1 style='margin:0; font-weight:900;'>₹{"****" if st.session_state.p else f"{total:,}"}</h1>
+        <div class='header-box'>
+            <div><span class='label-muted'>Hello,</span><br><b>{st.session_state.user['name']}!</b></div>
+            <div class='avatar-circle'>👤</div>
         </div>
     """, unsafe_allow_html=True)
 
-    # Goals Stack
-    if not st.session_state.g:
-        st.markdown("<div class='f-card' style='text-align:center; color:#333;'>VAULT EMPTY</div>", unsafe_allow_html=True)
-    else:
-        for i, goal in enumerate(st.session_state.g):
-            prog = (goal['b'] / goal['t'])
-            st.markdown(f"<div class='f-card'>", unsafe_allow_html=True)
-            st.markdown(f"<p class='muted'>{goal['n']}</p>", unsafe_allow_html=True)
-            st.progress(prog)
-            st.markdown(f"<div style='display:flex; justify-content:space-between; margin-top:10px;'><span style='font-weight:900;'>₹{goal['b']}</span><span class='muted'>Target: ₹{goal['t']}</span></div>", unsafe_allow_html=True)
-            
-            # Squad UI
-            if goal.get('squad'):
-                st.markdown("<div class='squad-group'><div class='squad-user'>Y</div><div class='squad-user'>F</div><div class='squad-user'>H</div></div>", unsafe_allow_html=True)
+    # Balance Card (Replicating Image 1)
+    total_bal = sum(g['balance'] for g in st.session_state.goals)
+    st.markdown(f"""
+        <div class='white-card'>
+            <span class='label-muted'>Total Balance</span>
+            <div class='title-large'>₹{total_bal:,.2f}</div>
+            <div style='display:flex; gap:10px; margin-top:15px;'>
+                <div style='height:30px; width:4px; background:#189F8D; border-radius:2px;'></div>
+                <div style='height:20px; width:4px; background:#E2E8F0; border-radius:2px; margin-top:10px;'></div>
+                <div style='height:40px; width:4px; background:#189F8D; border-radius:2px; margin-top:-10px;'></div>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
 
-            with st.expander("TOP UP"):
-                amt = st.number_input("Amount", min_value=1, key=f"a_{i}")
-                url = f"upi://pay?pa={MY_VPA}&pn={urllib.parse.quote(MY_NAME)}&am={amt}&cu=INR"
-                st.markdown(f"<a href='{url}' target='_self' style='text-decoration:none;'><div style='background:#CBFF00; color:#000; padding:12px; border-radius:12px; text-align:center; font-weight:800;'>SEND TO UPI</div></a>", unsafe_allow_html=True)
-                if st.button("I PAID ✅", key=f"c_{i}"):
-                    goal['b'] += amt
+    # Savings Goal Horizontal List
+    st.markdown("<div style='display:flex; justify-content:space-between;'><b>Savings</b> <span class='mint-text'>See all</span></div>", unsafe_allow_html=True)
+    
+    if not st.session_state.goals:
+        st.markdown("<p class='label-muted'>No goals yet. Tap + to start.</p>", unsafe_allow_html=True)
+    else:
+        # Create small cards for each goal
+        cols = st.columns(4)
+        for i, goal in enumerate(st.session_state.goals[:4]):
+            with cols[i]:
+                if st.button(get_icon(goal['name']), key=f"icon_{i}"):
+                    st.session_state.selected_goal = i
+                    st.session_state.view = "DETAIL"
                     st.rerun()
-            st.markdown("</div>", unsafe_allow_html=True)
+
+    # Transaction History
+    st.markdown("<br><b>Today</b>", unsafe_allow_html=True)
+    st.markdown("""
+        <div class='tx-item'>
+            <div style='display:flex; align-items:center;'>
+                <div class='tx-icon'>🍏</div>
+                <div><b>Food Store</b><br><span class='label-muted'>Groceries</span></div>
+            </div>
+            <div style='text-align:right;'><b>-₹1,450.00</b><br><span class='label-muted'>12:45 PM</span></div>
+        </div>
+    """, unsafe_allow_html=True)
 
 # ==========================================
-# 5. SCREEN: SET GOAL
+# 5. SCREEN: GOAL DETAIL (IMAGE 2 REPLICA)
+# ==========================================
+def show_detail():
+    goal = st.session_state.goals[st.session_state.selected_goal]
+    prog = goal['balance'] / goal['target']
+    offset = 565 - (prog * 565)
+
+    # Back Button
+    if st.button("← Back"):
+        st.session_state.view = "HOME"
+        st.rerun()
+
+    st.markdown(f"<h3 style='text-align:center;'>{goal['name']}</h3>", unsafe_allow_html=True)
+
+    # Circular Progress
+    st.markdown(f"""
+        <div class='ring-container'>
+            <svg class='svg-ring' width='200' height='200'>
+                <circle class='ring-bg' cx='100' cy='100' r='90'></circle>
+                <circle class='ring-fill' cx='100' cy='100' r='90' style='stroke-dasharray: 565; stroke-dashoffset: {offset};'></circle>
+            </svg>
+            <div style='position:absolute; text-align:center;'>
+                <div style='font-size:45px;'>{get_icon(goal['name'])}</div>
+            </div>
+        </div>
+        <div style='text-align:center;'>
+            <div class='title-large'>₹{goal['balance']:,.2f}</div>
+            <span class='label-muted'>of ₹{goal['target']:,.2f}</span>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Buttons
+    st.markdown("<br>", unsafe_allow_html=True)
+    c1, c2 = st.columns(2)
+    with c1:
+        if st.button("📥 Top up", use_container_width=True):
+            st.session_state.show_topup = True
+    with c2:
+        st.button("📤 Withdraw", disabled=(goal['balance'] < goal['target']), use_container_width=True)
+
+    if st.session_state.get('show_topup'):
+        amt = st.number_input("Enter Amount", min_value=1)
+        url = f"upi://pay?pa={MY_UPI_ID}&pn={urllib.parse.quote(MY_NAME)}&am={amt}&cu=INR"
+        st.markdown(f"<a href='{url}' target='_self' style='text-decoration:none;'><div class='btn-main btn-topup'>Proceed to UPI</div></a>", unsafe_allow_html=True)
+        if st.button("Confirm Transfer"):
+            goal['balance'] += amt
+            st.session_state.show_topup = False
+            st.rerun()
+
+# ==========================================
+# 6. SCREEN: CREATE GOAL
 # ==========================================
 def show_create():
     st.markdown("### Set New Goal")
     with st.container():
-        st.markdown("<div class='f-card'>", unsafe_allow_html=True)
-        name = st.text_input("Goal Name", placeholder="e.g. BMW M3")
-        target = st.number_input("Target Amount (₹)", min_value=1)
-        is_squad = st.toggle("Enable Squad Mode")
-        if st.button("ACTIVATE ➝"):
-            if name and target > 0:
-                st.session_state.g.append({"n": name, "t": target, "b": 0, "squad": is_squad})
-                st.session_state.v = "HOME"
+        st.markdown("<div class='white-card'>", unsafe_allow_html=True)
+        g_name = st.text_input("Goal Name (e.g. Car)")
+        g_target = st.number_input("Target Amount (₹)", min_value=1)
+        if st.button("Create", use_container_width=True):
+            if g_name and g_target > 0:
+                st.session_state.goals.append({"name": g_name, "target": g_target, "balance": 0})
+                st.session_state.view = "HOME"
                 st.rerun()
         st.markdown("</div>", unsafe_allow_html=True)
 
 # ==========================================
-# 6. SCREEN: SETTINGS (LOGOUT)
+# MAIN ROUTER
 # ==========================================
-def show_settings():
-    st.markdown("### Settings")
-    st.markdown(f"""
-        <div class='f-card'>
-            <p class='muted'>PROFILE</p>
-            <b>{st.session_state.user['n']}</b><br>
-            <span style='color:#555;'>{st.session_state.user['p']}</span>
-            <hr style='border-color:#111;'>
-            <p class='muted'>ESCROW ACCOUNT</p>
-            <b>{MY_VPA}</b>
-        </div>
-    """, unsafe_allow_html=True)
-    
-    st.markdown("<div class='logout-zone'>", unsafe_allow_html=True)
-    if st.button("DISCONNECT & LOGOUT"):
-        st.session_state.v = "AUTH"
-        st.session_state.g = []
-        st.rerun()
-    st.markdown("</div>", unsafe_allow_html=True)
+if st.session_state.view == "LOGIN":
+    show_login()
+else:
+    if st.session_state.view == "HOME": show_home()
+    elif st.session_state.view == "DETAIL": show_detail()
+    elif st.session_state.view == "CREATE": show_create()
 
-# ==========================================
-# ROUTING
-# ==========================================
-if st.session_state.v != "AUTH":
+    # Fixed Bottom Nav
     st.markdown("<br><br><br>", unsafe_allow_html=True)
     c1, c2, c3 = st.columns(3)
     with c1: 
-        if st.button("HOME"): st.session_state.v = "HOME"; st.rerun()
+        if st.button("🏠"): st.session_state.view = "HOME"; st.rerun()
     with c2: 
-        if st.button("GOAL"): st.session_state.v = "CREATE"; st.rerun()
+        if st.button("➕"): st.session_state.view = "CREATE"; st.rerun()
     with c3: 
-        if st.button("GEAR"): st.session_state.v = "SETTINGS"; st.rerun()
-
-if st.session_state.v == "AUTH": show_auth()
-elif st.session_state.v == "HOME": show_home()
-elif st.session_state.v == "CREATE": show_create()
-elif st.session_state.v == "SETTINGS": show_settings()
+        if st.button("👤"): st.session_state.view = "LOGIN"; st.rerun()
