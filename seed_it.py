@@ -124,7 +124,7 @@ def show_home():
                     st.rerun()
             else:
                 reason = "Target Not Met" if not target_met else f"Locked until {goal['date']}"
-                st.button(f"🔒 {reason.upper()}", disabled=True, key=f_locked_{i}")
+                st.button(f"🔒 {reason.upper()}", disabled=True, key=f"locked_{i}")
             st.markdown("</div>", unsafe_allow_html=True)
 
 def show_create():
@@ -143,7 +143,7 @@ def show_create():
         is_squad = st.toggle("SQUAD GOAL (POOL WITH FRIENDS)", key="is_squad")
         
         if st.button("INITIALIZE VAULT ➝"):
-            if name and target >= 1.0: # FIXED: Added the colon here
+            if name and target >= 1.0:
                 st.session_state.goals.append({
                     "name": name, "target": target, "balance": 0, "date": lock_date,
                     "type": "SQUAD" if is_squad else "SOLO",
