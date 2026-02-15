@@ -183,8 +183,8 @@ def show_dashboard():
 # ==========================================
 # 5. SCREEN: SET A NEW GOAL
 # ==========================================
-def show_plant():
-    st.markdown("### 🌱 Plant New Seed")
+def show_set a new goal():
+    st.markdown("### 🌱 Set a new goal")
     with st.container():
         st.markdown("<div class='app-card'>", unsafe_allow_html=True)
         name = st.text_input("GOAL NAME", placeholder="e.g. Iphone 17 pro max")
@@ -225,3 +225,4 @@ elif st.session_state.view == "SETTINGS":
         st.session_state.view = "AUTH"
         st.session_state.goals = []
         st.rerun()
+
