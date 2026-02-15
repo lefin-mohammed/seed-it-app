@@ -12,21 +12,20 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ==================== CSS STYLING ====================
+# ==================== CSS STYLING (IMAGE REPLICA) ====================
 def inject_custom_css():
     st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
     
-    .stApp { background-color: #000000; color: #FFFFFF; font-family: 'Outfit', sans-serif; }
+    .stApp { background-color: #000000; color: #FFFFFF; font-family: 'Inter', sans-serif; }
     
-    /* Hide Streamlit UI */
+    /* Hide Streamlit UI Elements */
     #MainMenu, footer, header, .stDeployButton {visibility: hidden;}
     
     /* Dashboard Header (Image 3 Style) */
     .profile-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
     .profile-pic { width: 42px; height: 42px; border-radius: 50%; overflow: hidden; border: 1px solid #333; }
-    .profile-pic img { width: 100%; height: 100%; object-fit: cover; }
     
     /* Balance Card (Image 3 Style) */
     .balance-card {
@@ -44,7 +43,7 @@ def inject_custom_css():
     }
     .icon-volt { background: #CCFF00 !important; color: #000 !important; border: none !important; font-weight: 900; }
 
-    /* Goal Card (Image 3 Style) */
+    /* Goal Card (Horizontal Bar Style - Image 3) */
     .goal-card {
         background: #0A0A0A; border-radius: 20px; padding: 18px;
         margin-bottom: 15px; border: 1px solid #151515; display: flex; gap: 15px;
@@ -57,10 +56,7 @@ def inject_custom_css():
     .ring-bg { fill: none; stroke: #1A1A1A; stroke-width: 10; }
     .ring-fill { fill: none; stroke: #CCFF00; stroke-width: 10; stroke-linecap: round; transition: 1s ease; }
 
-    /* Privacy Blur */
-    .privacy-blur { filter: blur(10px); }
-
-    /* Buttons */
+    /* Action Buttons */
     div.stButton > button {
         background: #CCFF00 !important; color: #000 !important; border-radius: 100px !important;
         padding: 16px !important; font-weight: 800 !important; border: none !important; width: 100%;
@@ -68,13 +64,13 @@ def inject_custom_css():
     </style>
     """, unsafe_allow_html=True)
 
-# ==================== DATA & LOGIC ====================
+# ==================== DATA & PAYMENT LOGIC ====================
 MY_VPA = "phathim630@oksbi" 
 MY_NAME = "Hathim p"
 
 def get_goal_meta(name):
     name = name.lower()
-    if "car" in name: return "Lexus ES 350", "🚗"
+    if "car" in name: return "Vehicle", "🚗"
     if "phone" in name or "iphone" in name: return "Apple", "📱"
     if "labubu" in name: return "Pop Mart", "🧸"
     if "airpods" in name: return "Apple", "🎧"
@@ -83,25 +79,12 @@ def get_goal_meta(name):
 # ==================== SESSION STATE ====================
 if 'view' not in st.session_state: st.session_state.view = 'SIGNUP'
 if 'goals' not in st.session_state: st.session_state.goals = []
-if 'privacy' not in st.session_state: st.session_state.privacy = False
 if 'history' not in st.session_state: st.session_state.history = []
 
-# ==================== VIEWS ====================
-
-def render_signup():
-    """Sign up page - Left as requested by user"""
-    st.markdown("""<div style='text-align:center; padding:60px 20px;'><div style='font-size:120px;'>🌱💰</div><h1 style='font-weight:800; font-size:36px;'>Set Your Goals.<br>Start Saving.</h1></div>""", unsafe_allow_html=True)
-    with st.form("signup"):
-        name = st.text_input("Full Name", placeholder="Lefin Mohammed")
-        mobile = st.text_input("Mobile Number", max_chars=10)
-        if st.form_submit_button("Create Account"):
-            if name and mobile:
-                st.session_state.user = {'name': name, 'mobile': mobile}
-                st.session_state.view = 'DASHBOARD'
-                st.rerun()
+# ==================== UI RENDERING ====================
 
 def render_dashboard():
-    """Dashboard - Replicated from Image 3 (1000075392.png)"""
+    """Home Dashboard - Replicated from Image 3 (1000075392.png)"""
     u = st.session_state.user
     
     # Header
@@ -120,17 +103,18 @@ def render_dashboard():
     st.markdown(f"""
     <div class="balance-card">
         <span style="color:#555; font-size:11px; font-weight:700;">CURRENT BALANCE (USD)</span>
-        <div class="balance-amount {'privacy-blur' if st.session_state.privacy else ''}">₹{total:,.2f}</div>
+        <div class="balance-amount">₹{total:,.2f}</div>
         <div class="balance-controls">
             <div class="icon-circle">🔄</div>
             <div class="icon-circle">📈</div>
+            <div class="icon-circle icon-volt">+</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
     
     st.markdown("<div style='display:flex; justify-content:space-between; margin-bottom:15px;'><b>My goals</b><span style='color:#CCFF00; font-size:12px;'>View All ></span></div>", unsafe_allow_html=True)
     
-    # Goals List (Image 3 Style)
+    # Goals List (Horizontal Bar Style from Image 3)
     for i, goal in enumerate(st.session_state.goals):
         prog = min(int((goal['current'] / goal['target']) * 100), 100)
         st.markdown(f"""
@@ -158,11 +142,11 @@ def render_detail():
     """Detail View - Replicated from Image 3 Right Phone (1000075391.png)"""
     goal = st.session_state.goals[st.session_state.selected_goal]
     prog = goal['current'] / goal['target']
-    offset = 565 - (prog * 565)
+    offset = 565 - (prog * 565) # Circle dash offset
 
     if st.button("← Back"): st.session_state.view = 'DASHBOARD'; st.rerun()
 
-    # Progress Ring (Image 3 Style)
+    # Circular Progress Detail (Image 3 Style)
     st.markdown(f"""
     <div style='text-align:center;'><span style='color:#555; font-size:11px; font-weight:700;'>{goal['category'].upper()}</span><br><h3>{goal['name']}</h3></div>
     <div class="ring-container">
@@ -178,40 +162,46 @@ def render_detail():
     </div>
     """, unsafe_allow_html=True)
 
-    # Top Up Section (UPI Intent)
+    # UPI Deposit Flow (Image 3 Button Style)
     st.markdown("<br>", unsafe_allow_html=True)
     amt = st.number_input("Amount to Seed", min_value=1)
     
-    # UPI Trigger
+    # Constructing UPI URI for Google Pay deep-linking
     encoded_name = urllib.parse.quote(MY_NAME)
     upi_url = f"upi://pay?pa={MY_VPA}&pn={encoded_name}&am={amt}&cu=INR&mode=02&tr=SEED{int(time.time())}"
     
-    st.markdown(f"""<a href="{upi_url}" target="_self" style="text-decoration:none;"><div style="background:#CCFF00; color:black; padding:18px; border-radius:100px; text-align:center; font-weight:900; margin-bottom:10px;">Top up goal balance</div></a>""", unsafe_allow_html=True)
+    st.markdown(f"""<a href="{upi_url}" target="_self" style="text-decoration:none;"><div style="background:#CCFF00; color:black; padding:18px; border-radius:100px; text-align:center; font-weight:900;">Top up goal balance</div></a>""", unsafe_allow_html=True)
     
     if st.button("I HAVE PAID ✅"):
         goal['current'] += amt
-        st.session_state.history.append({"msg": f"Top-up: {goal['name']}", "amt": f"+₹{amt}", "date": "Today"})
+        st.session_state.history.append({"msg": f"Top-up: {goal['name']}", "amt": f"+₹{amt}"})
         st.rerun()
-
-def render_create():
-    """Create View"""
-    st.markdown("### 🎯 New Goal")
-    with st.container():
-        n = st.text_input("What are you saving for?")
-        t = st.number_input("Target Amount", min_value=1)
-        if st.button("Initialize Locker"):
-            if n and t > 0:
-                cat, emoji = get_goal_meta(n)
-                st.session_state.goals.append({'name': n, 'target': float(t), 'current': 0.0, 'category': cat, 'emoji': emoji})
-                st.session_state.view = 'DASHBOARD'; st.rerun()
 
 # ==================== MAIN ====================
 def main():
     inject_custom_css()
-    if st.session_state.view == 'SIGNUP': render_signup()
+    if st.session_state.view == 'SIGNUP':
+        # Sign up view left as perfect in user prompt
+        st.markdown("<div style='text-align:center; padding:60px 20px;'><div style='font-size:120px;'>🌱💰</div><h1 style='font-weight:800; font-size:36px;'>Set Your Goals.<br>Start Saving.</h1></div>", unsafe_allow_html=True)
+        with st.form("signup"):
+            name = st.text_input("Full Name", placeholder="Lefin Mohammed")
+            mobile = st.text_input("Mobile Number", max_chars=10)
+            if st.form_submit_button("Create Account"):
+                if name and mobile:
+                    st.session_state.user = {'name': name, 'mobile': mobile}
+                    st.session_state.view = 'DASHBOARD'; st.rerun()
     elif st.session_state.view == 'DASHBOARD': render_dashboard()
     elif st.session_state.view == 'DETAIL': render_detail()
-    elif st.session_state.view == 'CREATE': render_create()
+    elif st.session_state.view == 'CREATE':
+        st.markdown("### 🎯 New Goal")
+        with st.container():
+            n = st.text_input("Goal Name")
+            t = st.number_input("Target Amount", min_value=1)
+            if st.button("Initialize Locker"):
+                if n and t > 0:
+                    cat, emoji = get_goal_meta(n)
+                    st.session_state.goals.append({'name': n, 'target': float(t), 'current': 0.0, 'category': cat, 'emoji': emoji})
+                    st.session_state.view = 'DASHBOARD'; st.rerun()
 
 if __name__ == "__main__":
     main()
