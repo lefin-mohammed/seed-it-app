@@ -181,13 +181,13 @@ def show_dashboard():
                 st.markdown("</div>", unsafe_allow_html=True)
 
 # ==========================================
-# 5. SCREEN: PLANT SEED
+# 5. SCREEN: SET A NEW GOAL
 # ==========================================
 def show_plant():
     st.markdown("### 🌱 Plant New Seed")
     with st.container():
         st.markdown("<div class='app-card'>", unsafe_allow_html=True)
-        name = st.text_input("GOAL NAME", placeholder="e.g. Royal Enfield")
+        name = st.text_input("GOAL NAME", placeholder="e.g. Iphone 17 pro max")
         target = st.number_input("TARGET AMOUNT (₹)", min_value=1)
         is_squad = st.toggle("SQUAD GOAL (GROUP SAVING)")
         
@@ -211,13 +211,13 @@ if st.session_state.view != "AUTH":
     with c1: 
         if st.button("Dashboard"): st.session_state.view = "DASHBOARD"; st.rerun()
     with c2: 
-        if st.button("Plant"): st.session_state.view = "PLANT"; st.rerun()
+        if st.button("set a new goal"): st.session_state.view = "SET A NEW GOAL"; st.rerun()
     with c3: 
         if st.button("Settings"): st.session_state.view = "SETTINGS"; st.rerun()
 
 if st.session_state.view == "AUTH": show_auth()
 elif st.session_state.view == "DASHBOARD": show_dashboard()
-elif st.session_state.view == "PLANT": show_plant()
+elif st.session_state.view == "SET A NEW GOAL": show_set a new goal()
 elif st.session_state.view == "SETTINGS":
     st.markdown("### Settings")
     st.markdown(f"<div class='app-card'><b>{st.session_state.user['name']}</b><br><span class='sub-text'>HATHIM'S SEED IT PROTOCOL</span></div>", unsafe_allow_html=True)
